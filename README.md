@@ -16,7 +16,6 @@
 ## 🌟 Visual Showcase
 
 <p align="center">
-  <img src="docs/assets/home.PNG" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Assessment Dashboard" />
   <img src="docs/assets/simulator.PNG" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Risk Simulator" />
 </p>
 <p align="center">
