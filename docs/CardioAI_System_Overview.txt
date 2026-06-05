@@ -1,0 +1,67 @@
+================================================================================
+                    CARDIO-AI: DETAILED SYSTEM OVERVIEW
+================================================================================
+
+This document explains the purpose of each file in your project folder, how they relate to one another, and specifically how your AI logic, Machine Learning models, and Jupyter Notebooks tie into the final application.
+
+--------------------------------------------------------------------------------
+1. THE JUPYTER NOTEBOOKS (The Core Research & Development)
+--------------------------------------------------------------------------------
+These files are the foundation of your project where the ML models were trained and the AI architecture was designed.
+
+- phase_1.ipynb:
+  Purpose: Data Engineering and Model Training.
+  This notebook loads the UCI Heart Disease dataset, performs Exploratory Data Analysis, handles class imbalances using SMOTE, and trains multiple models. Ultimately, it trains the XGBoost algorithm and exports it (along with the scaler) as the `.pkl` files.
+
+- phase_2_(2).ipynb: 
+  Purpose: AI Architecture and Logic Definition. 
+  This is the "MAIN" notebook for the AI logic. It formally defines the PEAS Framework (Performance, Environment, Actuators, Sensors). It also designs the A* Search algorithm for finding optimal clinical pathways, sets up the Forward Chaining Knowledge Base (KB) using AHA/ACC guidelines, and designs the Medical NLP retrieval system.
+
+--------------------------------------------------------------------------------
+2. THE MACHINE LEARNING ARTIFACTS
+--------------------------------------------------------------------------------
+- heart_disease_model.pkl: 
+  The actual trained XGBoost model exported from `phase_1.ipynb`. It takes the 21 clinical inputs and predicts the probability of heart disease.
+
+- heart_scaler.pkl: 
+  The StandardScaler object exported from `phase_1.ipynb`. It scales the patient's inputs to exactly match the distribution the model was trained on.
+
+--------------------------------------------------------------------------------
+3. THE BACKEND (Connecting ML to the Web)
+--------------------------------------------------------------------------------
+- server.py:
+  Purpose: The API bridge.
+  This Python Flask server loads your `.pkl` files into memory. It exposes two endpoints (`/predict` and `/simulate`) so that the web frontend can securely send patient data to Python, run the XGBoost prediction, and return the real-time results back to the user interface.
+
+- cardioai_gradio.py:
+  Purpose: Alternative Interface.
+  A Gradio-based Python interface. It contains a lot of the hardcoded logic (like the Knowledge Base rules and A* search) developed in `phase_2_(2).ipynb` wrapped in a rapid prototyping UI.
+
+--------------------------------------------------------------------------------
+4. THE FRONTEND WEB APPLICATION (The Modern Interface)
+--------------------------------------------------------------------------------
+These files make up the premium, Figma-inspired black and red user interface.
+
+- index.html: 
+  The main structural file for the web app. It defines the layout, the sidebar navigation, the input forms, and the "AI Journey" educational tab.
+
+- styles.css: 
+  The design system. It contains all the CSS rules for the dark mode aesthetic, red accents, glassmorphism card effects, and typography.
+
+- app.js: 
+  The main event controller. It handles tab switching, reads user inputs from the HTML form, and makes asynchronous network requests (using `fetch()`) to talk to `server.py` for risk analysis and What-If simulations.
+
+- model.js: 
+  A helper script that prepares and packages the data into the JSON format expected by the Python backend. 
+
+- algorithms.js: 
+  The frontend implementation of your AI rules. It takes the Knowledge Base, A* Search algorithm, and TF-IDF Medical Library concepts designed in `phase_2_(2).ipynb` and executes them directly in the browser using JavaScript to provide instant clinical pathway recommendations and medical library search results.
+
+--------------------------------------------------------------------------------
+SUMMARY WORKFLOW:
+1. Data and Rules created in: phase_1.ipynb & phase_2_(2).ipynb
+2. Model exported as: .pkl files
+3. Model hosted by: server.py
+4. User interacts with: index.html & styles.css
+5. UI talks to server via: app.js & model.js
+6. Extra AI logic runs in: algorithms.js

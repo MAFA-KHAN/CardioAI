@@ -1,0 +1,765 @@
+
+================================================================================
+  CARDIOAI PROJECT — EVERY FILE EXPLAINED
+  Complete File Purpose Reference
+  c:/Users/SilentWishMAFA/Downloads/ml/
+================================================================================
+
+  Total: 19 files + 1 hidden folder (.gradio)
+  Written by: MAFA Lab | CardioAI Team
+
+================================================================================
+  QUICK MAP (Read this first)
+================================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  NOTEBOOKS          →  Where everything was BUILT & TRAINED             │
+  │  .pkl FILES         →  The trained model EXPORTED from notebooks        │
+  │  server.py          →  Python BRIDGE between model and browser          │
+  │  cardioai_gradio.py →  Original Python UI (before the web version)     │
+  │  index.html         →  What you SEE in the browser (structure)          │
+  │  styles.css         →  How it LOOKS (colors, layout, animations)        │
+  │  app.js             →  Main controller — connects UI to server          │
+  │  model.js           →  Fallback JS model (works offline)               │
+  │  algorithms.js      →  A*, KB, TF-IDF running in the BROWSER           │
+  │  .txt / .md files   →  Documentation                                   │
+  │  .pdf files         →  Reference documents                             │
+  │  heart.png          →  Visual asset                                     │
+  │  .gradio/           →  Auto-generated cache from Gradio                │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+1.  phase_1.ipynb                                               [3.0 MB]
+    THE BRAIN — Machine Learning Training Notebook
+================================================================================
+
+  What it is:
+    Your first and largest Jupyter notebook. This is where the entire machine
+    learning pipeline lives — from raw data to trained model file.
+
+  What it does (in order):
+    ① Loads the UCI Heart Disease Dataset (Cleveland, 303 patients)
+    ② Performs Exploratory Data Analysis (histograms, correlation heatmaps,
+       class balance checks, box plots per feature)
+    ③ Handles missing values ('?' characters in original dataset)
+    ④ Encodes categorical variables using one-hot encoding:
+         cp (chest pain type) → 3 binary columns
+         restecg              → 2 binary columns
+         slope                → 2 binary columns
+         thal                 → 2 binary columns
+    ⑤ Engineers 4 new interaction features:
+         age_risk_group, bp_chol_interaction,
+         exercise_stress_score, thalch_age_ratio
+    ⑥ Applies StandardScaler (fits ONLY on training data)
+    ⑦ Trains THREE models for comparison:
+         Model 1 (Baseline):     Logistic Regression
+         Model 2 (Intermediate): Random Forest
+         Model 3 (Advanced):     XGBoost ← SELECTED FOR PRODUCTION
+    ⑧ Evaluates all models: Accuracy, Precision, Recall, Specificity,
+       F1-Score, ROC Curve, AUC, Confusion Matrix
+    ⑨ Analyzes bias-variance tradeoff and regularization effect
+    ⑩ Applies K-Means clustering (unsupervised, k=3 clusters)
+    ⑪ Exports the trained model and scaler:
+         → heart_disease_model.pkl  (XGBoost model)
+         → heart_scaler.pkl        (StandardScaler)
+
+  Who uses it:
+    You (academic submission). The .pkl files it generates are what server.py
+    loads to run live predictions.
+
+  Size: 3.0 MB — Large because it contains all output cells, plots,
+  training logs, and the embedded model data inside the notebook.
+
+
+================================================================================
+2.  phase_2_(2).ipynb                                          [399 KB]
+    THE INTELLIGENCE — AI Architecture Notebook
+================================================================================
+
+  What it is:
+    Your second Jupyter notebook. This is where the intelligent agent
+    components are designed and formally defined.
+
+  What it does:
+    ① Defines the PEAS Framework for the CardioAI agent:
+         Performance, Environment, Actuators, Sensors
+    ② Formulates the state space:
+         Initial State = ML risk classification
+         Goal State    = "Goal State" (safe patient management)
+         Actions       = clinical interventions (BP Mgmt, ECG, etc.)
+    ③ Implements A* Search algorithm:
+         Priority queue (heapq), heuristic design, admissibility proof
+    ④ Builds the Medical Decision Graph:
+         Nodes = clinical states, Edges = intervention transitions with costs
+    ⑤ Designs the Knowledge Base (R01–R20):
+         20 IF-THEN rules sourced from AHA, ACC, NHLBI, Mayo Clinic, WHO
+    ⑥ Implements Forward Chaining inference engine
+    ⑦ Runs the inference on High Risk and Low Risk patient examples
+    ⑧ Designs the NLP TF-IDF document retrieval system
+    ⑨ Generates clinical recommendations engine
+    ⑩ Shows full system integration: ML → A* → KB → Recommendations
+
+  Who uses it:
+    You (academic submission). All the logic inside was ported into
+    server.py and algorithms.js to run live in the web application.
+
+
+================================================================================
+3.  heart_disease_model.pkl                                    [117 KB]
+    THE MODEL — Trained XGBoost Classifier (Binary File)
+================================================================================
+
+  What it is:
+    A serialized (pickled) Python object containing the fully trained
+    XGBoost classifier from phase_1.ipynb.
+
+  What it stores:
+    - All XGBoost tree structures (learned from 303 training patients)
+    - Feature weights, split thresholds, leaf values
+    - Model hyperparameters (n_estimators, max_depth, learning_rate, etc.)
+    - L1 and L2 regularization parameters
+
+  How it's used:
+    server.py loads it on startup:
+      model = joblib.load("heart_disease_model.pkl")
+    Then uses it to predict:
+      prob = model.predict_proba(scaled_data)[0][1]
+      → Returns probability of heart disease (0.0 to 1.0)
+
+  Critical note:
+    This file MUST stay in the ml/ folder. If deleted or moved,
+    server.py falls back to a simple DemoModel (basic sigmoid function)
+    and predictions become approximations, not real XGBoost output.
+
+  DO NOT EDIT this file manually — it is a binary format that will
+  become corrupted if opened in a text editor.
+
+
+================================================================================
+4.  heart_scaler.pkl                                           [1.6 KB]
+    THE NORMALIZER — Fitted StandardScaler (Binary File)
+================================================================================
+
+  What it is:
+    A serialized Python StandardScaler object fitted on the training data
+    in phase_1.ipynb. Tiny file — only stores 21 mean values and
+    21 standard deviation values (one per feature).
+
+  What it does:
+    Transforms raw patient inputs:
+      scaled_value = (raw_value - training_mean) / training_std
+    This ensures new patient data is in the same statistical range
+    the model was trained on.
+
+  Why it matters:
+    If you use a different scaler, or scale the data differently, the
+    model receives out-of-distribution inputs and predictions become wrong.
+    The scaler must EXACTLY match what was used during training.
+
+  How it's used:
+    server.py:  scaled = scaler.transform(patient_dataframe)
+    This happens before EVERY prediction.
+
+  Version note:
+    Trained with scikit-learn 1.6.1, loaded in 1.7.2. A warning appears
+    at server startup but the scaler works correctly — StandardScaler's
+    core math (subtract mean, divide std) has not changed between versions.
+
+
+================================================================================
+5.  server.py                                                  [15 KB]
+    THE API — Flask Backend Server
+================================================================================
+
+  What it is:
+    A Python Flask web server that acts as the bridge between the
+    browser frontend and the trained machine learning models.
+
+  What it does:
+    ① Loads heart_disease_model.pkl and heart_scaler.pkl on startup
+    ② Exposes two HTTP endpoints:
+
+    ENDPOINT 1: POST /predict
+      Receives: JSON with 13 patient features from the browser
+      Does:
+        - build_feature_df()   → Creates 21-column feature DataFrame
+                                  (mirrors phase_1.ipynb preprocessing exactly)
+        - scaler.transform()   → Normalizes features
+        - model.predict_proba()→ Gets disease probability from XGBoost
+        - determine_risk()     → Classifies as High/Medium/Low Risk
+        - build_medical_graph()→ Builds patient-specific decision graph
+        - a_star_search()      → Finds optimal care pathway (from phase_2)
+        - generate_initial_facts() → Creates symbolic facts from patient data
+        - forward_chaining()   → Runs 20 KB rules (from phase_2)
+        - generate_recommendations() → Generates clinical action items
+      Returns: JSON with ML result, A* pathway, KB trace, recommendations
+
+    ENDPOINT 2: POST /simulate
+      Receives: Same patient JSON
+      Does:
+        - Runs base prediction first
+        - Then runs 6 counterfactual "probe" predictions:
+            "What if BP were 120?"
+            "What if Cholesterol were 180?"
+            "What if Max HR increased by 15?"
+            "What if ST Depression were 0?"
+            "What if Exercise Angina were removed?"
+            "What if Thalassemia were normal?"
+        - Each probe changes ONE value, reruns the full pipeline
+        - Computes delta (probability change) for each
+      Returns: JSON with base probability + sensitivity dictionary
+
+  How to run it:
+    python server.py
+    → Starts on http://localhost:5000
+    → Must be running for the Assessment and Simulator tabs to work
+
+  Key functions ported from notebooks:
+    build_feature_df()        ← from phase_1.ipynb preprocessing
+    a_star_search()           ← from phase_2_(2).ipynb
+    build_medical_graph()     ← from phase_2_(2).ipynb
+    knowledge_base (R01–R20) ← from phase_2_(2).ipynb
+    forward_chaining()        ← from phase_2_(2).ipynb
+    generate_recommendations()← from phase_2_(2).ipynb
+
+
+================================================================================
+6.  cardioai_gradio.py                                         [56 KB]
+    THE ORIGINAL UI — Gradio Python Application (Legacy)
+================================================================================
+
+  What it is:
+    The original Python interface built before the HTML/CSS/JS web app.
+    Uses the Gradio library to create a web UI directly from Python.
+
+  What it does:
+    - Same ML pipeline as server.py
+    - Contains the original implementations of A*, KB, and TF-IDF
+    - Gradio auto-generates the UI components (sliders, dropdowns, outputs)
+    - Was the REFERENCE CODE used when building server.py
+
+  Why it still exists:
+    - It's your original submitted work — DO NOT DELETE
+    - It was the source of truth for all logic ported into server.py
+    - It can run independently:
+        python cardioai_gradio.py
+        → Opens Gradio UI at http://localhost:7860
+
+  Relationship to other files:
+    cardioai_gradio.py is the ANCESTOR of server.py
+    All the AI logic in server.py was copied and adapted from here.
+
+
+================================================================================
+7.  index.html                                                 [31 KB]
+    THE STRUCTURE — Main Web Application Page
+================================================================================
+
+  What it is:
+    The single HTML file that defines everything you see in the browser.
+    CardioAI is a Single Page Application (SPA) — one HTML file,
+    multiple tabs that show/hide via JavaScript.
+
+  What it contains:
+    ① Top navigation bar with logo and pill-style nav tabs
+    ② HOME tab:
+         - Hero section with welcome text and stats
+         - Feature overview cards (ML, A*, KB, Simulator)
+         - How it works section
+    ③ ASSESSMENT tab:
+         - 13-field patient form (all UCI features)
+         - Four output panels: ML Result, A* Pathway,
+           Clinical Recommendations, KB Inference
+    ④ SIMULATOR tab:
+         - Header strip with 4 profile switcher tabs (Low/Med/High/Critical)
+         - 3-column bento layout:
+             Col 1: SVG ring gauge + animated human figure + outlook table
+             Col 2: Clinical parameters form (vitals + 8 dropdowns)
+             Col 3: Health drivers bar chart + empty state
+    ⑤ CLINICAL KB tab:
+         - Search bar + quick search chips
+         - TF-IDF result card
+    ⑥ ABOUT tab: Mission statement, academic disclaimer
+    ⑦ Footer with attribution
+
+  What it DOESN'T do:
+    HTML only defines structure — no logic, no styling.
+    Logic is in app.js and algorithms.js.
+    Styling is in styles.css.
+
+  How to open:
+    - With Flask server running: Visit http://localhost:5000
+      (if server.py serves it), OR
+    - Open directly in browser: double-click index.html
+      (works offline using model.js fallback)
+
+
+================================================================================
+8.  styles.css                                                 [22 KB]
+    THE DESIGN — Complete Visual System
+================================================================================
+
+  What it is:
+    The stylesheet that makes CardioAI look professional.
+    Contains ALL visual styling — no inline styles needed in HTML
+    (except for one-off overrides).
+
+  What it contains (in order):
+    ① CSS Variables (design tokens):
+         --bg-main, --bg-card, --accent-green, --text-primary, etc.
+         Change these to re-theme the entire app instantly.
+    ② Base reset (*, body)
+    ③ Top navigation bar styles
+    ④ Main content area and tab system
+    ⑤ Glassmorphism card styles (backdrop-filter: blur)
+    ⑥ Form inputs (pill-shaped, green focus ring)
+    ⑦ Buttons (primary + secondary)
+    ⑧ Hero section (blob animations, doctor image layout)
+    ⑨ Feature grid cards
+    ⑩ Dashboard layout (Assessment tab 2-column grid)
+    ⑪ Widget cards and metric inputs
+    ⑫ Floating overlay card (Assessment results)
+    ⑬ Human risk icon states:
+         .human-idle  → grey
+         .human-low   → glowing green (2.5s pulse)
+         .human-medium→ glowing amber (2s pulse)
+         .human-high  → glowing red (1.5s pulse)
+         .human-critical → dark red/near-black (1s rapid pulse)
+    ⑭ Simulator bento layout (NEW):
+         .sim-bento → 3-column grid
+         .sim-ptab  → profile tab pills
+         .sim-vital-box → vital metric cards
+         .driver-bar → sensitivity analysis bars
+         .sim-outlook-card → risk summary rows
+    ⑮ Footer, animations (@keyframes: glow, morph, heartbeat)
+
+
+================================================================================
+9.  app.js                                                     [27 KB]
+    THE CONTROLLER — Main Application Logic
+================================================================================
+
+  What it is:
+    The primary JavaScript file that makes the app interactive.
+    Handles all user events, communicates with the Flask server,
+    and updates the UI with results.
+
+  What it contains:
+
+    Tab Navigation:
+      switchTab(tabId) — shows/hides tab panes
+      scrollToSection() — smooth scroll on home page
+
+    Form Helpers:
+      getAssessmentValues() — reads all 13 inputs from Assessment form
+      getSimulatorValues()  — reads all inputs from Simulator form
+
+    Assessment (main AI analysis):
+      analyzePatient()
+        → Collects form data
+        → POST /predict to server.py
+        → On response: renders 4 panels
+            renderMLResult()      → probability ring, risk badge
+            renderAstarResult()   → pathway step chain
+            renderRecsResult()    → bullet recommendations
+            renderKBResult()      → rule trace cards
+
+    Simulator (counterfactual what-if):
+      loadProfile(type)
+        → Populates all form fields with demo patient data
+        → Highlights the active profile tab
+        → Auto-runs runSimulator()
+      runSimulator()
+        → POST /simulate to server.py
+        → setHumanRisk(prob) → updates human icon + ring gauge
+        → Populates outlook table (Status, Probability, Category)
+        → Renders animated driver bars with color-coded deltas
+
+    Risk Icon System:
+      setHumanRisk(prob)
+        → Animates SVG ring arc (stroke-dasharray)
+        → Changes human figure class (human-low/medium/high/critical)
+        → Updates text label with emoji + risk level
+        → Colors the ring and percentage text to match
+
+    Demo Profiles (DEMO_PROFILES constant):
+      Four complete patient datasets (Low/Medium/High/Critical)
+      Each has exact clinical values from the UCI dataset distribution
+
+    KB Search:
+      searchMedicalKB() — reads query input, calls TF-IDF in algorithms.js
+      quickSearch(term) — pre-fills query and runs search
+      renderKBResult()  — displays matching document with relevance score
+
+    Keyboard Shortcuts:
+      Ctrl+Enter in Assessment form → triggers analyzePatient()
+
+
+================================================================================
+10. algorithms.js                                              [19 KB]
+    THE AI ENGINE — A*, KB, and TF-IDF in JavaScript
+================================================================================
+
+  What it is:
+    A pure JavaScript implementation of the AI algorithms from
+    phase_2_(2).ipynb. Runs ENTIRELY IN THE BROWSER — no server needed.
+
+  What it contains:
+
+    A* SEARCH:
+      aStarSearch(graph, start, goal, heuristic)
+        → Min-heap priority queue using array + sort
+        → Expands nodes in order of f = g + h
+        → Returns optimal path array and total cost
+      heuristicValues — distance estimates per node to "Goal State"
+      buildMedicalGraph(riskState, params) — dynamic graph per patient
+
+    KNOWLEDGE BASE (20 Rules):
+      knowledgeBase — array of {id, if, then, source} objects
+        R01 elderly_patient → age_related_cardiac_risk (AHA)
+        R02 high_bp → hypertension (AHA/ACC)
+        ... through R20 low_risk → preventive_education (WHO)
+      generateInitialFacts(params) — converts numeric inputs to symbolic facts
+      forwardChaining(facts, rules) — runs inference until saturation
+        → Returns: [derivedFacts, inferenceTrace]
+
+    TF-IDF MEDICAL SEARCH:
+      medicalDocs — array of 15 clinical reference documents
+        Each has: title + full clinical text
+        Topics: hypertension, cholesterol, thalassemia, chest pain,
+                ECG, CAD, heart failure, LVH, AF, biomarkers,
+                ST segment, age risk, prevention, diabetes, emergency triage
+      buildVocabulary(docs) — creates word→index mapping
+      computeTFIDF(docs, vocab) — builds document-term matrix
+      stopWords — filtered common words (the, is, at, etc.)
+      medicalSearch(query) — finds best matching document
+        → Tokenizes query → removes stop words → computes cosine similarity
+        → Returns: {title, text, score}
+
+    CLINICAL RECOMMENDATIONS:
+      generateRecommendations(params) — threshold-based rule engine
+        → Returns array of urgency-ordered recommendation strings
+
+  Relationship to server.py:
+    algorithms.js is the CLIENT-SIDE twin of server.py's AI logic.
+    They both implement the same algorithms independently:
+    - server.py = Python version (uses real XGBoost model)
+    - algorithms.js = JavaScript version (pure logic, no model)
+    The KB and A* in algorithms.js are used by the Clinical KB tab (search).
+    The ML prediction ALWAYS comes from server.py (never from algorithms.js).
+
+
+================================================================================
+11. model.js                                                   [8.7 KB]
+    THE FALLBACK — JavaScript ML Model Simulation
+================================================================================
+
+  What it is:
+    A JavaScript class that SIMULATES the XGBoost model's behavior using
+    hand-tuned weights. Used when the Flask server is not running.
+
+  What it contains:
+    class MLModel {
+      featureWeights — calibrated importance values per feature:
+        oldpeak:         0.22  (highest — ST depression is strongest predictor)
+        exang:           0.18  (exercise angina)
+        thal_reversible: 0.16  (reversible defect)
+        thalch:         -0.15  (max HR — negative weight, higher is better)
+        restecg_st:      0.14  (ECG abnormality)
+        ...
+
+      scaleFeatures(features)  — MinMax normalization (age/80, chol/300, etc.)
+      predict(features)        — returns {probability, prediction, riskState}
+      performSensitivityAnalysis(features) — runs 6 counterfactual probes
+    }
+
+    determineRisk(prob)  — returns "High/Medium/Low Risk"
+    getRiskEmoji(risk)   — returns 🔴/🟡/🟢
+
+  When it's used:
+    Originally designed as a pure browser fallback. Currently, the app
+    always talks to server.py for ML predictions. model.js provides the
+    determineRisk() and getRiskEmoji() utility functions that app.js uses.
+
+  Important distinction:
+    model.js is NOT the real model. It approximates the XGBoost behavior
+    using simplified linear weights. The REAL model is in:
+      heart_disease_model.pkl → loaded by server.py
+
+
+================================================================================
+12. CARDIOAI_TECHNICAL_DOCUMENTATION.txt                       [41 KB]
+    WRITTEN TODAY — Deep Technical Reference
+================================================================================
+
+  What it is:
+    A comprehensive technical document explaining how every component
+    integrates with the original notebooks.
+
+  What it covers:
+    - All 20 KB rules with clinical sources
+    - Feature engineering pipeline (exact column names and formulas)
+    - Why XGBoost was chosen over baseline models
+    - A* heuristic design and admissibility proof
+    - Why the 0.35 threshold was chosen
+    - Model authenticity evidence (6-point proof)
+    - Simulator counterfactual analysis methodology
+    - TF-IDF search implementation details
+    - System architecture diagram (text-based)
+    - Ethical limitations and academic disclaimer
+
+  Use it for: Technical presentations, viva questions, academic defence
+
+
+================================================================================
+13. ASSIGNMENT_REQUIREMENTS_FULFILLMENT.txt                    [37 KB]
+    WRITTEN TODAY — Academic Rubric Mapping
+================================================================================
+
+  What it is:
+    A point-by-point proof that every assignment requirement is met,
+    with exact references to which notebook and which frontend component
+    implements each requirement.
+
+  What it covers:
+    Requirements 1–10 fully mapped:
+    Req 1:  Dataset + Problem Statement
+    Req 2:  Preprocessing + EDA
+    Req 3:  Three ML Models comparison table
+    Req 4:  Bias-variance + Regularization
+    Req 5:  All metrics + Threshold discussion
+    Req 6:  K-Means clustering
+    Req 7:  PEAS + A* + State space
+    Req 9:  KB rules + Forward chaining trace (both Low and Critical)
+    Req 10: Full integration workflow
+
+    Includes:
+      - Two full inference traces (Low Risk: 1 rule fires; Critical: 19 fire)
+      - Complete model comparison table
+      - Integration summary table mapping each req to notebook + frontend
+
+  Use it for: Submitting alongside notebooks as supplementary evidence
+
+
+================================================================================
+14. CONVERSION_COMPLETE.md                                     [10 KB]
+    PROGRESS LOG — Development Completion Record
+================================================================================
+
+  What it is:
+    A markdown checklist created during development to track the
+    conversion of the Gradio app to the HTML/JS web app.
+
+  What it contains:
+    - Feature completion checklist (all ✅)
+    - Code statistics (line counts, file sizes at time of creation)
+    - How-to-run instructions (3 methods)
+    - Key implementation decisions (why vanilla JS, why TF-IDF not transformers)
+    - Test scenarios (6 test cases with expected outputs)
+    - Design features (animations, typography, color system)
+    - Performance benchmarks (ML: ~10ms, Search: ~5ms, Simulator: ~15ms)
+    - Maintenance guide (how to add new rules, documents, features)
+
+  Use it for: Understanding how the app evolved, or quick setup instructions
+
+
+================================================================================
+15. CardioAI_System_Overview.txt                               [4.4 KB]
+    EARLY DOCUMENTATION — Original File Purpose Summary
+================================================================================
+
+  What it is:
+    An earlier, shorter version of the file explanations document.
+    Written at the beginning of the project to orient developers.
+
+  What it covers:
+    - Brief purpose of each file in 2–4 sentences
+    - Summary workflow diagram:
+        phase_1.ipynb + phase_2_.ipynb
+              ↓
+           .pkl files
+              ↓
+           server.py
+              ↓
+        index.html ← styles.css ← app.js ← model.js ← algorithms.js
+
+  Relationship to CARDIOAI_TECHNICAL_DOCUMENTATION.txt:
+    This is the short version. The technical documentation is the full version.
+
+
+================================================================================
+16. README.md                                                  [10 KB]
+    PROJECT README — Setup and Usage Guide
+================================================================================
+
+  What it is:
+    The standard project README. Explains the project to anyone who
+    opens the folder for the first time.
+
+  What it contains:
+    - Project description and feature list
+    - Installation and setup instructions:
+        pip install flask flask-cors xgboost scikit-learn joblib
+        python server.py
+    - How to use each tab of the web application
+    - Technology stack summary
+    - File structure overview
+    - Academic disclaimer
+
+  Use it for: Submitting with the project, or sharing with evaluators
+
+
+================================================================================
+17. CardioGuard_System_Report.pdf                              [371 KB]
+    REFERENCE PDF — System Report Document
+================================================================================
+
+  What it is:
+    A PDF report document related to the CardioAI/CardioGuard system.
+    Likely the written academic report submitted alongside the notebooks.
+
+  What it contains:
+    A formal system report covering:
+    - Problem definition and motivation
+    - Literature review / background
+    - Methodology (model selection, preprocessing, AI design)
+    - Results and evaluation
+    - System architecture diagrams
+    - Conclusions and future work
+
+  Use it for: Academic submission reference, viva preparation
+
+
+================================================================================
+18. ML.pdf                                                     [320 KB]
+    REFERENCE PDF — Machine Learning Assignment or Notes
+================================================================================
+
+  What it is:
+    A PDF document containing ML-related material. Likely either:
+    (a) The original assignment specification document, or
+    (b) Reference notes on ML theory used during development
+
+  Use it for: Cross-checking assignment requirements, theory reference
+
+
+================================================================================
+19. heart.png                                                  [267 KB]
+    VISUAL ASSET — Heart Image for UI
+================================================================================
+
+  What it is:
+    A PNG image of a heart used as a visual asset in the web application.
+
+  Where it's used:
+    styles.css references it via:
+      .heart-visual { background: url('heart.png') ... }
+    Originally used as an animated visual in the Simulator's left panel.
+
+  Current status:
+    The simulator now uses the SVG human figure instead, but heart.png
+    remains in the CSS heart-visual class for other uses on the home page
+    or hero section visuals.
+
+
+================================================================================
+20. .gradio/   (hidden folder)                                 [auto-generated]
+    CACHE — Gradio Application Data
+================================================================================
+
+  What it is:
+    A hidden directory automatically created by the Gradio library
+    when cardioai_gradio.py is run. Contains:
+    - Gradio's internal configuration cache
+    - Temporary uploaded files (if any were used)
+    - Gradio version metadata
+
+  Can you delete it?
+    Yes — it is regenerated automatically every time cardioai_gradio.py
+    runs. It does NOT affect server.py or the HTML web app.
+
+  Why it exists:
+    Gradio creates this folder to store its session and configuration data.
+
+
+================================================================================
+  DEPENDENCY MAP — Which Files Need Each Other
+================================================================================
+
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │                                                                          │
+  │  phase_1.ipynb  ──────────────────────────────────┐                     │
+  │       │ trains & exports                          │                     │
+  │       ↓                                           │                     │
+  │  heart_disease_model.pkl  ←── REQUIRED BY ──→ server.py                │
+  │  heart_scaler.pkl         ←── REQUIRED BY ──→ server.py                │
+  │                                                   │                     │
+  │  phase_2_(2).ipynb ──── LOGIC PORTED INTO ──→ server.py               │
+  │  cardioai_gradio.py ─── LOGIC PORTED INTO ──→ server.py               │
+  │  phase_2_(2).ipynb ──── LOGIC PORTED INTO ──→ algorithms.js           │
+  │                                                   │                     │
+  │  server.py ─── SERVES DATA TO ──────────────→ app.js                  │
+  │  app.js    ─── READS FROM ──────────────────→ index.html              │
+  │  app.js    ─── CALLS FUNCTIONS FROM ────────→ algorithms.js           │
+  │  app.js    ─── USES HELPERS FROM ───────────→ model.js                │
+  │  index.html ── LOADS ───────────────────────→ styles.css              │
+  │  index.html ── LOADS ───────────────────────→ app.js                  │
+  │  index.html ── LOADS ───────────────────────→ algorithms.js           │
+  │  index.html ── LOADS ───────────────────────→ model.js                │
+  │  index.html ── DISPLAYS ────────────────────→ heart.png               │
+  │                                                                          │
+  └──────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+  WHAT HAPPENS IF YOU DELETE EACH FILE
+================================================================================
+
+  ┌──────────────────────────────┬───────────────────────────────────────────┐
+  │ File Deleted                 │ What Breaks                               │
+  ├──────────────────────────────┼───────────────────────────────────────────┤
+  │ heart_disease_model.pkl      │ Server falls back to DemoModel (approx)   │
+  │ heart_scaler.pkl             │ Server falls back to DemoScaler           │
+  │ server.py                    │ Assessment + Simulator tabs stop working  │
+  │ index.html                   │ ENTIRE APP disappears                     │
+  │ styles.css                   │ App works but looks completely unstyled   │
+  │ app.js                       │ No interactivity — nothing responds       │
+  │ algorithms.js                │ KB search tab broken; KB results missing  │
+  │ model.js                     │ getRiskEmoji(), determineRisk() undefined │
+  │ heart.png                    │ Missing image in hero/simulator visuals   │
+  │ phase_1.ipynb                │ Cannot retrain model (existing pkl ok)    │
+  │ phase_2_(2).ipynb            │ Cannot review AI architecture (app ok)   │
+  │ cardioai_gradio.py           │ Cannot run Gradio version (web app ok)   │
+  │ .gradio/                     │ Nothing — regenerated automatically       │
+  │ Documentation .txt files     │ No visible impact on app                  │
+  │ .pdf files                   │ No impact on app                          │
+  │ README.md etc.               │ No impact on app                          │
+  └──────────────────────────────┴───────────────────────────────────────────┘
+
+
+================================================================================
+  SUMMARY — 5 CATEGORIES
+================================================================================
+
+  🧠 BRAIN (ML Training & AI Design):
+     phase_1.ipynb, phase_2_(2).ipynb
+
+  💾 MODEL FILES (Trained Artifacts):
+     heart_disease_model.pkl, heart_scaler.pkl
+
+  ⚙️  BACKEND (Python Server):
+     server.py, cardioai_gradio.py
+
+  🌐 FRONTEND (Web Application):
+     index.html, styles.css, app.js, algorithms.js, model.js
+
+  📄 DOCUMENTATION & ASSETS:
+     README.md, CONVERSION_COMPLETE.md, CardioAI_System_Overview.txt,
+     CARDIOAI_TECHNICAL_DOCUMENTATION.txt, ASSIGNMENT_REQUIREMENTS_FULFILLMENT.txt,
+     CardioGuard_System_Report.pdf, ML.pdf, heart.png, .gradio/
+
+================================================================================
+END OF FILE REFERENCE
+CARDIOAI · MAFA LAB · ACADEMIC PROJECT 2024–2026
+================================================================================

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioAI — Intelligent Health Analytics</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION HEADER -->
+    <nav class="top-navbar">
+        <div class="brand" onclick="scrollToTop()">
+            <div class="brand-icon">
+                <i data-lucide="activity"></i>
+            </div>
+            CardioAI
+        </div>
+        
+        <div class="nav-pill-container">
+            <div class="nav-menu">
+                <button class="nav-item active" onclick="scrollToTop()">Home</button>
+                <button class="nav-item" data-tab="assess">Assessment</button>
+                <button class="nav-item" data-tab="knowledge">Clinical KB</button>
+                <button class="nav-item" onclick="scrollToSection('section-journey')">AI Journey</button>
+                <button class="nav-item" onclick="scrollToSection('section-about')">About us</button>
+                <button class="nav-item" onclick="scrollToSection('section-contact')">Contact Us</button>
+            </div>
+        </div>
+
+        <div>
+            <button class="btn-primary" onclick="switchTab('simulator')">Simulator</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <main id="main-container">
+
+            <!-- HOME TAB (CUREX AESTHETIC) -->
+            <div id="home" class="tab-pane active">
+                
+                <!-- HERO SECTION -->
+                <div class="hero-container">
+                    
+                    <!-- Left Text Area -->
+                    <div class="hero-text-area">
+                        <span class="hero-welcome">Welcome to your health care destination!</span>
+                        <h1 class="hero-title">Your <span class="text-green">Health</span>, Our Priority<br>Expert <span class="text-green">Care</span> You Can Trust!</h1>
+                        <p class="hero-subtitle">Advanced predictive analytics and optimal clinical pathfinding. Our intelligent systems securely process your profile to recommend personalized care pathways and keep you healthy.</p>
+                        
+                        <div class="hero-buttons">
+                            <button class="btn-primary" onclick="switchTab('assess')">Assess Risk</button>
+                            <button class="btn-secondary" onclick="switchTab('simulator')">Simulate Health</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Visual Area -->
+                    <div class="hero-visuals">
+                        <div class="blob-background"></div>
+                        <div class="blob-background-2"></div>
+                        
+                        <div class="heart-visual"></div>
+
+                        <!-- Emergency Floating Card -->
+                        <div class="floating-card-1">
+                            <div class="header">Help Desk</div>
+                            <p>Any query? Reach out to our dedicated support and clinical guidance teams at any time. We are here to help!</p>
+                            <div class="contact">
+                                <div style="background: var(--accent-green-light); color: var(--accent-green); padding: 4px; border-radius: 50%; display: flex;">
+                                    <i data-lucide="phone" style="width: 14px; height: 14px;"></i>
+                                </div>
+                                +92321XXXXXXX
+                            </div>
+                        </div>
+
+                        <!-- Contact Floating Card -->
+                        <div class="floating-card-2">
+                            <div class="icon-box">
+                                <i data-lucide="mail"></i>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Email Support</div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">support@cardioai.com</div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">24/7 Availability</div>
+                            <button class="btn-primary" style="width: 100%; padding: 8px; font-size: 14px;">Contact Support</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCROLLING SECTION: AI JOURNEY -->
+                <div id="section-journey" class="home-section">
+                    <div class="section-header">
+                        <h2>Our <span class="text-green">AI Journey</span></h2>
+                        <p>Behind the scenes, we utilize state-of-the-art intelligent systems to ensure you receive the most precise and optimal care available.</p>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon-wrapper">
+                                <i data-lucide="cpu"></i>
+                            </div>
+                            <h3>Predictive Intelligence</h3>
+                            <p>Powered by an advanced XGBoost Machine Learning model. We specifically optimized our algorithms for a <strong>0.931 recall</strong>, prioritizing the detection of critical cases to ensure no underlying heart condition goes unnoticed.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-wrapper">
+                                <i data-lucide="git-merge"></i>
+                            </div>
+                            <h3>Clinical Pathfinding</h3>
+                            <p>We leverage a sophisticated <strong>A* Search Algorithm</strong> that mathematically calculates the most optimal, cost-effective sequences of medical interventions to guide you back to perfect health.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-wrapper">
+                                <i data-lucide="book-check"></i>
+                            </div>
+                            <h3>Expert Inference Engine</h3>
+                            <p>Our Knowledge-Based System acts as a digital specialist. Using forward-chaining rules derived directly from AHA/ACC clinical guidelines, it guarantees our recommendations are medically sound and deeply transparent.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCROLLING SECTION: ABOUT US -->
+                <div id="section-about" class="home-section">
+                    <div class="section-header">
+                        <h2><span class="text-green">Why</span> We Built CardioAI</h2>
+                    </div>
+
+                    <div class="about-container">
+                        <div class="about-quote-icon">
+                            <i data-lucide="heart"></i>
+                        </div>
+                        <p class="about-text">
+                            "At the heart of modern medicine lies a profound responsibility: preserving the human lives entrusted to our care. Too often, patients are reduced to mere data points within a complex system. We developed CardioAI to fundamentally change this narrative, bridging the divide between advanced clinical analytics and deeply empathetic patient care.
+                            <br><br>
+                            We understand that a missed diagnosis is never just a statistical anomaly—it is a critical moment that alters lives and families. Driven by this reality, our intelligent architecture is relentlessly engineered to prioritize sensitivity and vigilance, ensuring that no underlying risk goes unnoticed. By equipping our medical professionals with cutting-edge, predictive intelligence, we empower them to step away from the charts and back to the bedside—where true healing begins."
+                        </p>
+                        <div style="font-weight: 700; color: var(--text-primary); font-size: 16px;">The CardioAI Clinical Team</div>
+                    </div>
+                </div>
+
+                <!-- SCROLLING SECTION: CONTACT US -->
+                <div id="section-contact" class="home-section">
+                    <div class="section-header">
+                        <h2>Get in <span class="text-green">Touch</span></h2>
+                        <p>Have questions or need clinical guidance? Our support team is available 24/7.</p>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-card" style="text-align: center;">
+                            <div class="feature-icon-wrapper" style="margin: 0 auto 24px auto;">
+                                <i data-lucide="mail"></i>
+                            </div>
+                            <h3>Email Us</h3>
+                            <p style="font-weight: 600; color: var(--accent-green); margin-top: 8px;">support@cardioai.com</p>
+                        </div>
+
+                        <div class="feature-card" style="text-align: center;">
+                            <div class="feature-icon-wrapper" style="margin: 0 auto 24px auto;">
+                                <i data-lucide="phone"></i>
+                            </div>
+                            <h3>Call Us</h3>
+                            <p style="font-weight: 600; color: var(--accent-green); margin-top: 8px;">+92 321 XXXX XXX</p>
+                        </div>
+
+                        <div class="feature-card" style="text-align: center;">
+                            <div class="feature-icon-wrapper" style="margin: 0 auto 24px auto;">
+                                <i data-lucide="map-pin"></i>
+                            </div>
+                            <h3>Visit Us</h3>
+                            <p style="font-weight: 600; color: var(--accent-green); margin-top: 8px;">Islamabad, Pakistan</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- END HOME TAB -->
+
+            <!-- ASSESSMENT TAB -->
+            <div id="assess" class="tab-pane">
+                <div class="page-header">
+                    <h1 class="page-title">Health <span class="text-green">Assessment</span></h1>
+                    <p class="page-subtitle">Enter your details below for a quick, confidential checkup.</p>
+                </div>
+
+                <div class="glass-card mb-8 utility-spacing">
+                    <h2 class="card-title"><i data-lucide="clipboard-list" class="text-green"></i> Patient Details</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Age (years)</label>
+                            <input type="number" id="age" value="63" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Sex</label>
+                            <select id="sex" class="form-input">
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Chest Pain Type</label>
+                            <select id="cp" class="form-input">
+                                <option value="1">Typical Angina</option>
+                                <option value="2">Atypical Angina</option>
+                                <option value="3">Non-Anginal Pain</option>
+                                <option value="4" selected>Asymptomatic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Resting Blood Pressure (mmHg)</label>
+                            <input type="number" id="trestbps" value="145" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Serum Cholesterol (mg/dl)</label>
+                            <input type="number" id="chol" value="233" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Heart Rate Achieved</label>
+                            <input type="number" id="thalch" value="150" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Exercise Induced Angina</label>
+                            <select id="exang" class="form-input">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ST Depression (oldpeak)</label>
+                            <input type="number" id="oldpeak" value="2.3" step="0.1" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ST Segment Slope</label>
+                            <select id="slope" class="form-input">
+                                <option value="1">Upsloping</option>
+                                <option value="2" selected>Flat</option>
+                                <option value="3">Downsloping</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Thalassemia</label>
+                            <select id="thal" class="form-input">
+                                <option value="1">Normal</option>
+                                <option value="2">Fixed Defect</option>
+                                <option value="3" selected>Reversible Defect</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Resting ECG</label>
+                            <select id="restecg" class="form-input">
+                                <option value="0" selected>Normal</option>
+                                <option value="1">ST-T Abnormality</option>
+                                <option value="2">LV Hypertrophy</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="analyzePatient()">
+                        <i data-lucide="activity"></i> Run Health Analysis
+                    </button>
+                </div>
+
+                <!-- Loader -->
+                <div id="ml-status" style="display: none; color: var(--text-secondary); margin-bottom: 24px;">
+                    <i data-lucide="loader" class="lucide-spin text-green"></i> Running full AI analysis...
+                </div>
+
+                <!-- Panel 1: ML Risk Prediction -->
+                <div class="glass-card utility-spacing" id="ml-output" style="display: none;">
+                    <h2 class="card-title"><i data-lucide="activity" class="text-green"></i> ML Risk Prediction</h2>
+                    <div id="ml-result" class="result-content"></div>
+                </div>
+
+                <!-- Panel 2: A* Clinical Pathway -->
+                <div class="glass-card utility-spacing" id="astar-output" style="display: none;">
+                    <h2 class="card-title"><i data-lucide="git-merge" class="text-green"></i> Optimal Care Pathway (A* Search)</h2>
+                    <div id="astar-result" class="result-content"></div>
+                </div>
+
+                <!-- Panel 3: Clinical Recommendations -->
+                <div class="glass-card utility-spacing" id="recs-output" style="display: none;">
+                    <h2 class="card-title"><i data-lucide="clipboard-check" class="text-green"></i> Clinical Recommendations</h2>
+                    <div id="recs-result" class="result-content"></div>
+                </div>
+
+                <!-- Panel 4: KB Inference -->
+                <div class="glass-card" id="kb-output" style="display: none;">
+                    <h2 class="card-title"><i data-lucide="book-check" class="text-green"></i> Knowledge Base Inference</h2>
+                    <div id="kb-result" class="result-content"></div>
+                </div>
+            </div>
+
+            <!-- SIMULATOR TAB -->
+            <div id="simulator" class="tab-pane">
+                <!-- Header + Profile Strip together -->
+                <div class="sim-header-strip">
+                    <div>
+                        <h1 class="page-title" style="margin:0 0 4px;">Health <span class="text-green">Simulator</span></h1>
+                        <p class="page-subtitle" style="margin:0;">UCI-inspired clinical profiles · Switch to auto-populate all fields</p>
+                    </div>
+                    <!-- Profile Tabs -->
+                    <div class="sim-profile-tabs">
+                        <button id="ptab-low"      class="sim-ptab sim-ptab-low"      onclick="loadProfile('low')"     >
+                            <span class="ptab-dot ptab-dot-low"></span>Low Risk
+                        </button>
+                        <button id="ptab-medium"   class="sim-ptab sim-ptab-medium"   onclick="loadProfile('medium')"  >
+                            <span class="ptab-dot ptab-dot-medium"></span>Moderate Risk
+                        </button>
+                        <button id="ptab-high"     class="sim-ptab sim-ptab-high"     onclick="loadProfile('high')"    >
+                            <span class="ptab-dot ptab-dot-high"></span>High Risk
+                        </button>
+                        <button id="ptab-critical" class="sim-ptab sim-ptab-critical" onclick="loadProfile('critical')">
+                            <span class="ptab-dot ptab-dot-critical"></span>&#9760; Critical
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bento 3-column grid -->
+                <div class="sim-bento">
+
+                    <!-- COL 1 · Human Icon + Risk Ring + Outlook -->
+                    <div class="sim-col-icon glass-card">
+                        <!-- SVG Ring Gauge -->
+                        <div class="risk-ring-wrap">
+                            <svg class="risk-ring-svg" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+                                <circle id="risk-ring-arc" cx="60" cy="60" r="50" fill="none"
+                                    stroke="#CBD5E1" stroke-width="10"
+                                    stroke-dasharray="0 314"
+                                    stroke-dashoffset="78.5"
+                                    stroke-linecap="round"
+                                    style="transition: stroke-dasharray 1s ease, stroke 0.6s ease;"/>
+                                <text id="risk-ring-pct" x="60" y="55" text-anchor="middle"
+                                    font-size="22" font-weight="800" fill="var(--text-primary)">—</text>
+                                <text x="60" y="74" text-anchor="middle"
+                                    font-size="9" fill="var(--text-secondary)" font-weight="600" letter-spacing="1">RISK SCORE</text>
+                            </svg>
+                        </div>
+
+                        <!-- Human Figure -->
+                        <div id="human-risk-container" class="human-risk-wrapper human-idle">
+                            <svg id="human-risk-icon" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg" width="120" height="170">
+                                <circle cx="50" cy="22" r="16" class="human-fill"/>
+                                <rect x="32" y="43" width="36" height="48" rx="10" class="human-fill"/>
+                                <rect x="8"  y="46" width="22" height="9" rx="5" class="human-fill" transform="rotate(12,19,50)"/>
+                                <rect x="70" y="46" width="22" height="9" rx="5" class="human-fill" transform="rotate(-12,81,50)"/>
+                                <rect x="32" y="88" width="14" height="44" rx="7" class="human-fill" transform="rotate(4,39,110)"/>
+                                <rect x="54" y="88" width="14" height="44" rx="7" class="human-fill" transform="rotate(-4,61,110)"/>
+                                <polyline id="human-heartline"
+                                    points="34,65 39,65 42,55 45,75 48,62 51,65 56,65 60,65 66,65"
+                                    fill="none" stroke="white" stroke-width="2.2"
+                                    stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+                            </svg>
+                            <div id="human-risk-label" class="human-label-text">SELECT PROFILE</div>
+                        </div>
+
+                        <!-- Loader -->
+                        <div id="sim-status" style="display:none; font-size:13px; color:var(--text-secondary); margin-top:8px; text-align:center;">
+                            <i data-lucide="loader" class="lucide-spin text-green"></i> Analysing...
+                        </div>
+
+                        <!-- Projected Outlook summary -->
+                        <div id="sim-prob-output" style="display:none; width:100%; margin-top:16px;">
+                            <div class="sim-outlook-card">
+                                <div class="sim-outlook-row">
+                                    <span class="sim-outlook-key">Status</span>
+                                    <span id="sim-outlook-status" class="sim-outlook-val">—</span>
+                                </div>
+                                <div class="sim-outlook-row">
+                                    <span class="sim-outlook-key">Probability</span>
+                                    <span id="sim-outlook-pct" class="sim-outlook-val text-green">—</span>
+                                </div>
+                                <div class="sim-outlook-row">
+                                    <span class="sim-outlook-key">Category</span>
+                                    <span id="sim-outlook-cat" class="sim-outlook-val">—</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COL 2 · Patient Inputs -->
+                    <div class="sim-col-form glass-card">
+                        <div class="sim-section-label"><i data-lucide="clipboard-list" style="width:14px;height:14px;"></i> Clinical Parameters</div>
+
+                        <!-- Vital trio -->
+                        <div class="sim-vitals-row">
+                            <div class="sim-vital-box">
+                                <div class="sim-vital-label"><i data-lucide="activity" style="width:12px;height:12px;"></i> Blood Pressure</div>
+                                <div class="sim-vital-value-row">
+                                    <input type="number" id="sim-bp" value="130" class="sim-vital-input">
+                                    <span class="sim-vital-unit">mmHg</span>
+                                </div>
+                            </div>
+                            <div class="sim-vital-box">
+                                <div class="sim-vital-label"><i data-lucide="droplet" style="width:12px;height:12px;"></i> Cholesterol</div>
+                                <div class="sim-vital-value-row">
+                                    <input type="number" id="sim-chol" value="200" class="sim-vital-input">
+                                    <span class="sim-vital-unit">mg/dl</span>
+                                </div>
+                            </div>
+                            <div class="sim-vital-box">
+                                <div class="sim-vital-label"><i data-lucide="heart-pulse" style="width:12px;height:12px;"></i> Max Heart Rate</div>
+                                <div class="sim-vital-value-row">
+                                    <input type="number" id="sim-hr" value="150" class="sim-vital-input">
+                                    <span class="sim-vital-unit">bpm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div style="border-top:1px solid var(--border); margin:16px 0;"></div>
+
+                        <!-- Form grid 2 cols -->
+                        <div class="sim-form-grid">
+                            <div class="sim-field"><label>Age</label><input type="number" id="sim-age" value="50" class="form-input"></div>
+                            <div class="sim-field"><label>Sex</label><select id="sim-sex" class="form-input"><option value="1">Male</option><option value="0">Female</option></select></div>
+                            <div class="sim-field"><label>Chest Pain</label><select id="sim-cp" class="form-input"><option value="1">Typical Angina</option><option value="2">Atypical Angina</option><option value="3">Non-Anginal</option><option value="4">Asymptomatic</option></select></div>
+                            <div class="sim-field"><label>Exercise Angina</label><select id="sim-exang" class="form-input"><option value="0">No</option><option value="1">Yes</option></select></div>
+                            <div class="sim-field"><label>ST Depression</label><input type="number" id="sim-op" value="1.0" step="0.1" class="form-input"></div>
+                            <div class="sim-field"><label>ST Slope</label><select id="sim-slope" class="form-input"><option value="1">Upsloping</option><option value="2">Flat</option><option value="3">Downsloping</option></select></div>
+                            <div class="sim-field"><label>Thalassemia</label><select id="sim-thal" class="form-input"><option value="1">Normal</option><option value="2">Fixed Defect</option><option value="3">Reversible Defect</option></select></div>
+                            <div class="sim-field"><label>Resting ECG</label><select id="sim-ecg" class="form-input"><option value="0">Normal</option><option value="1">ST-T Abnormality</option><option value="2">LVH</option></select></div>
+                        </div>
+
+                        <!-- Run button -->
+                        <button class="btn-primary" onclick="runSimulator()" style="width:100%; margin-top:20px; padding:14px; font-size:15px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <i data-lucide="play-circle"></i> Run Simulation
+                        </button>
+                        <p style="text-align:center; font-size:11px; color:var(--text-secondary); margin-top:10px; letter-spacing:0.5px;">ACADEMIC PROJECT · MAFA LAB · NOT FOR CLINICAL USE</p>
+                    </div>
+
+                    <!-- COL 3 · Results & Drivers -->
+                    <div class="sim-col-results">
+
+                        <!-- Key Health Drivers -->
+                        <div class="glass-card sim-drivers-card" id="sim-delta-output" style="display:none;">
+                            <div class="sim-section-label"><i data-lucide="trending-up" style="width:14px;height:14px;"></i> Key Health Drivers</div>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-bottom:12px;">What changes would most improve your outlook?</p>
+                            <div id="sim-delta-result"></div>
+                        </div>
+
+                        <!-- Empty state -->
+                        <div id="sim-empty-state" class="glass-card" style="text-align:center; padding:48px 24px; color:var(--text-secondary);">
+                            <i data-lucide="bar-chart-2" style="width:40px;height:40px; margin-bottom:16px; color:var(--border);"></i>
+                            <p style="font-size:14px; font-weight:600; margin-bottom:8px;">Results will appear here</p>
+                            <p style="font-size:12px;">Load a clinical profile or click<br><strong>Run Simulation</strong> to begin.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- KNOWLEDGE TAB -->
+            <div id="knowledge" class="tab-pane">
+                <div class="page-header">
+                    <h1 class="page-title">Clinical <span class="text-green">Knowledge Base</span></h1>
+                    <p class="page-subtitle">TF-IDF powered search across 15 cardiology reference documents — sourced from AHA, ACC, NHLBI and Mayo Clinic guidelines.</p>
+                </div>
+
+                <div class="glass-card utility-spacing">
+                    <div style="display: flex; gap: 16px;">
+                        <input type="text" id="knowledge-query" class="form-input" style="flex: 1;" placeholder="Search e.g. high cholesterol, blood pressure, chest pain, ECG...">
+                        <button class="btn-primary" onclick="searchMedicalKB()">
+                            <i data-lucide="search"></i> Search KB
+                        </button>
+                    </div>
+                    <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span style="font-size:12px; color:var(--text-secondary);">Quick search:</span>
+                        <button onclick="quickSearch('cholesterol')" style="font-size:12px; padding:4px 12px; border-radius:20px; border:1px solid var(--border-green); background:var(--accent-green-light); color:var(--accent-green); cursor:pointer;">Cholesterol</button>
+                        <button onclick="quickSearch('blood pressure')" style="font-size:12px; padding:4px 12px; border-radius:20px; border:1px solid var(--border-green); background:var(--accent-green-light); color:var(--accent-green); cursor:pointer;">Blood Pressure</button>
+                        <button onclick="quickSearch('chest pain')" style="font-size:12px; padding:4px 12px; border-radius:20px; border:1px solid var(--border-green); background:var(--accent-green-light); color:var(--accent-green); cursor:pointer;">Chest Pain</button>
+                        <button onclick="quickSearch('heart disease')" style="font-size:12px; padding:4px 12px; border-radius:20px; border:1px solid var(--border-green); background:var(--accent-green-light); color:var(--accent-green); cursor:pointer;">Heart Disease</button>
+                        <button onclick="quickSearch('thalassemia')" style="font-size:12px; padding:4px 12px; border-radius:20px; border:1px solid var(--border-green); background:var(--accent-green-light); color:var(--accent-green); cursor:pointer;">Thalassemia</button>
+                    </div>
+                </div>
+
+                <div id="knowledge-results" style="display: grid; gap: 16px;"></div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+            <p>Note: This is an academic project made for lab assistant</p>
+            <p style="margin-top: 8px; font-weight: 600; color: var(--accent-green);">Powered by MAFA</p>
+        </footer>
+    </div>
+
+    <script src="model.js"></script>
+    <script src="algorithms.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
