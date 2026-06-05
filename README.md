@@ -19,7 +19,7 @@
   <img src="docs/assets/simulator.PNG" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Risk Simulator" />
 </p>
 <p align="center">
-  <em>Left: Clinical Assessment Dashboard &nbsp;&nbsp;|&nbsp;&nbsp; Right: Counterfactual Risk Simulator</em>
+  <em> Right: Counterfactual Risk Simulator</em>
 </p>
 
 ---
