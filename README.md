@@ -116,9 +116,7 @@ For examiners or developers wishing to dive into the technical theory and rubric
 ## 🙏 Acknowledgments
 CardioAI leverages powerful open-source tools and datasets. Special thanks to:
 * **[UCI Machine Learning Repository](https://archive.ics.uci.edu/)**: For providing the foundational Cleveland Heart Disease dataset.
-* **[XGBoost](https://xgboost.readthedocs.io/)**: For the high-performance gradient boosting framework powering our predictions.
-* **[Scikit-Learn](https://scikit-learn.org/)**: For robust preprocessing and scaling algorithms.
-* **[Flask](https://flask.palletsprojects.com/)**: For enabling the lightweight, rapid backend API.
+
 
 ---
 <p align="center">
