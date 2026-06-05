@@ -113,7 +113,7 @@ For examiners or developers wishing to dive into the technical theory and rubric
 ---
 
 ## 🙏 Acknowledgments
-CardioAI leverages powerful open-source tools and datasets. Special thanks to:
+CardioAI leverages datasets. Special thanks to:
 * **[UCI Machine Learning Repository](https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data)**: For providing the foundational Cleveland Heart Disease dataset.
 
 
