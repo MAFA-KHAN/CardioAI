@@ -1,0 +1,130 @@
+================================================================================
+CARDIOAI: FORMAL PREDICATE LOGIC REPRESENTATION
+Knowledge Base (KB) Inference Engine
+================================================================================
+
+This document translates the 20 clinical rules used in the CardioAI Knowledge 
+Base (Forward Chaining Engine) into First-Order Predicate Logic. 
+This formalization demonstrates the mathematical reasoning underpinning the 
+expert system.
+
+--------------------------------------------------------------------------------
+1. UNIVERSE OF DISCOURSE & VARIABLES
+--------------------------------------------------------------------------------
+Let Universe of Discourse (U) be the set of all patients evaluated by the system.
+Let x ∈ U represent an individual patient.
+
+--------------------------------------------------------------------------------
+2. PREDICATE DEFINITIONS
+--------------------------------------------------------------------------------
+Base Clinical Fact Predicates (Derived from data & ML):
+Elderly(x)              : Patient x is ≥ 60 years old
+HighBP(x)               : Patient x has resting blood pressure ≥ 140 mmHg
+HighChol(x)             : Patient x has serum cholesterol ≥ 240 mg/dl
+LowMaxHR(x)             : Patient x achieved max heart rate < 120 bpm
+ExerciseAngina(x)       : Patient x experiences exercise-induced angina
+HighOldPeak(x)          : Patient x has ST depression > 2.0
+ReversibleThal(x)       : Patient x has a reversible thalassemia defect
+ECGAbnormal(x)          : Patient x has ST-T abnormality or LVH on resting ECG
+SilentIschemiaRisk(x)   : Patient x is asymptomatic for chest pain
+HighRisk(x)             : Patient x is classified as High Risk by ML model
+LowRisk(x)              : Patient x is classified as Low Risk by ML model
+
+Derived Clinical State Predicates (Inferred by the system):
+AgeRelatedCardiacRisk(x): Patient x has age-related cardiovascular risk
+Hypertension(x)         : Patient x has clinical hypertension
+Hyperlipidemia(x)       : Patient x has clinical hyperlipidemia
+ReducedCardiacReserve(x): Patient x has reduced cardiac output reserve
+PossibleIschemia(x)     : Patient x has suspected myocardial ischemia
+AbnormalStressResponse(x): Patient x has abnormal cardiac stress response
+ReversiblePerfusionDefect(x): Patient x has a reversible perfusion defect
+ECGDetectedAbnormality(x): Patient x has an ECG-detected abnormality
+AsymptomaticCP(x)       : Patient x has asymptomatic presentation
+
+Higher-Order / Compound Predicates:
+ElevatedCVRisk(x)       : Patient x has compounded cardiovascular risk
+SuspectedCAD(x)         : Patient x has suspected Coronary Artery Disease
+RequiresECG(x)          : Patient x requires formal 12-lead ECG testing
+CriticalScreeningNeeded(x): Patient x requires aggressive screening
+ExerciseCardiacFailureRisk(x): Patient x is at risk of cardiac failure under stress
+
+Action / Pathway Predicates:
+DiagnosticTesting(x)    : Patient x is referred for diagnostic testing
+CardiologyConsultation(x): Patient x is referred for cardiology consultation
+CloseMonitoring(x)      : Patient x is placed under close clinical monitoring
+SpecialistFollowup(x)   : Patient x requires specialist follow-up
+TreatmentPlanning(x)    : Patient x is ready for formal treatment planning
+PreventiveEducation(x)  : Patient x is assigned preventive lifestyle education
+
+
+--------------------------------------------------------------------------------
+3. RULE BASE IN FIRST-ORDER LOGIC
+--------------------------------------------------------------------------------
+
+TIER 1: Base Fact Translation (Single Antecedent Rules)
+--------------------------------------------------------------------------------
+R01: ∀x ( Elderly(x) → AgeRelatedCardiacRisk(x) )
+R02: ∀x ( HighBP(x) → Hypertension(x) )
+R03: ∀x ( HighChol(x) → Hyperlipidemia(x) )
+R04: ∀x ( LowMaxHR(x) → ReducedCardiacReserve(x) )
+R05: ∀x ( ExerciseAngina(x) → PossibleIschemia(x) )
+R06: ∀x ( HighOldPeak(x) → AbnormalStressResponse(x) )
+R07: ∀x ( ReversibleThal(x) → ReversiblePerfusionDefect(x) )
+R08: ∀x ( ECGAbnormal(x) → ECGDetectedAbnormality(x) )
+R09: ∀x ( SilentIschemiaRisk(x) → AsymptomaticCP(x) )
+
+TIER 2: Compound Diagnostic Logic (Multiple Antecedents using Conjunction ∧)
+--------------------------------------------------------------------------------
+R10: ∀x ( Hypertension(x) ∧ Hyperlipidemia(x) → ElevatedCVRisk(x) )
+     "If a patient has hypertension AND hyperlipidemia, they have elevated CV risk."
+
+R11: ∀x ( PossibleIschemia(x) ∧ HighRisk(x) → SuspectedCAD(x) )
+     "If a patient has possible ischemia AND is flagged high-risk by ML, suspect CAD."
+
+R12: ∀x ( AbnormalStressResponse(x) ∧ PossibleIschemia(x) → RequiresECG(x) )
+     "If a patient has an abnormal stress response AND possible ischemia, ECG is required."
+
+R13: ∀x ( Elderly(x) ∧ SilentIschemiaRisk(x) → CriticalScreeningNeeded(x) )
+     "If a patient is elderly AND asymptomatic, critical screening is needed (silent killer risk)."
+
+R14: ∀x ( ReducedCardiacReserve(x) ∧ ReversiblePerfusionDefect(x) → ExerciseCardiacFailureRisk(x) )
+     "If a patient has reduced cardiac reserve AND a perfusion defect, they risk failure under stress."
+
+TIER 3: Clinical Pathway Escalation (Chaining)
+--------------------------------------------------------------------------------
+R15: ∀x ( RequiresECG(x) → DiagnosticTesting(x) )
+R16: ∀x ( DiagnosticTesting(x) → CardiologyConsultation(x) )
+R17: ∀x ( HighRisk(x) → CloseMonitoring(x) )
+R18: ∀x ( CloseMonitoring(x) ∧ DiagnosticTesting(x) → SpecialistFollowup(x) )
+R19: ∀x ( SpecialistFollowup(x) → TreatmentPlanning(x) )
+R20: ∀x ( LowRisk(x) → PreventiveEducation(x) )
+
+
+--------------------------------------------------------------------------------
+4. EXAMPLE INFERENCE PROOF (MODUS PONENS)
+--------------------------------------------------------------------------------
+Scenario: Patient 'John' (Age 72, High BP, High Chol)
+Assume initial facts derived from data:
+  Elderly(John) is True
+  HighBP(John) is True
+  HighChol(John) is True
+
+Proof Trace:
+1. Elderly(John)                        [Given Fact]
+2. ∀x (Elderly(x) → AgeRelatedCardiacRisk(x))  [Rule R01]
+3. AgeRelatedCardiacRisk(John)          [Modus Ponens on 1, 2]
+
+4. HighBP(John)                         [Given Fact]
+5. ∀x (HighBP(x) → Hypertension(x))            [Rule R02]
+6. Hypertension(John)                   [Modus Ponens on 4, 5]
+
+7. HighChol(John)                       [Given Fact]
+8. ∀x (HighChol(x) → Hyperlipidemia(x))        [Rule R03]
+9. Hyperlipidemia(John)                 [Modus Ponens on 7, 8]
+
+10. Hypertension(John) ∧ Hyperlipidemia(John)  [Conjunction Introduction on 6, 9]
+11. ∀x (Hypertension(x) ∧ Hyperlipidemia(x) → ElevatedCVRisk(x)) [Rule R10]
+12. ElevatedCVRisk(John)                [Modus Ponens on 10, 11]
+
+Conclusion: The system formally proves that John has ElevatedCVRisk.
+================================================================================

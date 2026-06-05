@@ -16,8 +16,8 @@
 ## 🌟 Visual Showcase
 
 <p align="center">
-  <img src="docs/assets/media__1780665947726.png" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Assessment Dashboard" />
-  <img src="docs/assets/media__1780667473918.png" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Risk Simulator" />
+  <img src="docs/assets/home.PNG" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Assessment Dashboard" />
+  <img src="docs/assets/simulator.PNG" width="48%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" alt="CardioAI Risk Simulator" />
 </p>
 <p align="center">
   <em>Left: Clinical Assessment Dashboard &nbsp;&nbsp;|&nbsp;&nbsp; Right: Counterfactual Risk Simulator</em>
@@ -112,6 +112,15 @@ For examiners or developers wishing to dive into the technical theory and rubric
 - `FILE_REFERENCE_GUIDE.txt`: An index of every file's exact purpose.
 
 ---
+
+## 🙏 Acknowledgments
+CardioAI leverages powerful open-source tools and datasets. Special thanks to:
+* **[UCI Machine Learning Repository](https://archive.ics.uci.edu/)**: For providing the foundational Cleveland Heart Disease dataset.
+* **[XGBoost](https://xgboost.readthedocs.io/)**: For the high-performance gradient boosting framework powering our predictions.
+* **[Scikit-Learn](https://scikit-learn.org/)**: For robust preprocessing and scaling algorithms.
+* **[Flask](https://flask.palletsprojects.com/)**: For enabling the lightweight, rapid backend API.
+
+---
 <p align="center">
-  <em>Developed by the MAFA Lab as an Academic Project. Not for Clinical Use.</em>
+  <em>Made with ❤️ by MAFA. Not for Clinical Use.</em>
 </p>
