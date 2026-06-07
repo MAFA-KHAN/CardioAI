@@ -66,6 +66,58 @@ body {
     cursor: pointer;
 }
 
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-left: 4px;
+    transition: all 0.3s ease;
+}
+
+.status-online {
+    background: #e6f2e6;
+    color: #3b8c3b;
+    border: 1px solid rgba(59, 140, 59, 0.2);
+}
+
+.status-offline {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.status-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-online .status-badge-dot {
+    background: #3b8c3b;
+    animation: status-pulse-green 2s infinite;
+}
+
+.status-offline .status-badge-dot {
+    background: #2563eb;
+    animation: status-pulse-blue 2s infinite;
+}
+
+@keyframes status-pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(59, 140, 59, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(59, 140, 59, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 140, 59, 0); }
+}
+
+@keyframes status-pulse-blue {
+    0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
 .brand-icon {
     width: 36px;
     height: 36px;

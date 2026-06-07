@@ -136,11 +136,11 @@ async function analyzePatient() {
             document.getElementById('ml-status').style.display = 'none';
             return;
         }
+        updateStatusBadge(true);
     } catch (err) {
-        console.error('Failed to connect to ML backend:', err);
-        alert('Could not connect to ML backend. Is server.py running?');
-        document.getElementById('ml-status').style.display = 'none';
-        return;
+        console.warn('Failed to connect to ML backend, falling back to local Edge AI:', err);
+        updateStatusBadge(false);
+        data = runOfflinePredict(values);
     }
 
     document.getElementById('ml-status').style.display = 'none';
@@ -387,85 +387,174 @@ async function runSimulator() {
         document.getElementById('sim-status').style.display = 'none';
 
         if (data.success) {
-            const prob = data.base_probability;
-            const pct = (prob * 100).toFixed(1);
-            const riskState = determineRisk(prob);
-            const riskEmoji = getRiskEmoji(riskState);
-            const pred = prob >= 0.35 ? 'Elevated Risk' : 'Routine Status';
-
-            // Animate human icon + ring
-            setHumanRisk(prob);
-
-            // Populate structured outlook rows
-            document.getElementById('sim-prob-output').style.display = 'block';
-            const statusEl = document.getElementById('sim-outlook-status');
-            const pctEl    = document.getElementById('sim-outlook-pct');
-            const catEl    = document.getElementById('sim-outlook-cat');
-            if (statusEl) statusEl.textContent = pred;
-            if (pctEl)    { pctEl.textContent = pct + '%'; pctEl.style.color = prob >= 0.55 ? '#DC2626' : prob >= 0.35 ? '#D97706' : '#16A34A'; }
-            if (catEl)    catEl.textContent = `${riskEmoji} ${riskState}`;
-
-            // Also keep sim-prob-result if it exists (fallback)
-            const probResultEl = document.getElementById('sim-prob-result');
-            if (probResultEl) probResultEl.textContent = '';
-
-            // Hide empty state
-            const emptyEl = document.getElementById('sim-empty-state');
-            if (emptyEl) emptyEl.style.display = 'none';
-
-            // Build visual driver bars
-            const sensitivity = data.sensitivity;
-            const sorted = Object.entries(sensitivity)
-                .map(([feat, delta]) => ({ feat, delta: parseFloat(delta) }))
-                .sort((a, b) => a.delta - b.delta);
-
-            const maxAbs = Math.max(...sorted.map(s => Math.abs(s.delta)), 1);
-            let barsHTML = '';
-            for (const { feat, delta } of sorted) {
-                const isGood = delta <= 0;
-                const pctWidth = Math.min(100, (Math.abs(delta) / maxAbs) * 100).toFixed(1);
-                const sign = delta > 0 ? '+' : '';
-                const badgeClass = isGood ? 'driver-delta-good' : 'driver-delta-bad';
-                const barClass   = isGood ? 'driver-bar-good'   : 'driver-bar-bad';
-                barsHTML += `
-                <div class="driver-row">
-                    <div class="driver-label-row">
-                        <span>${feat}</span>
-                        <span class="driver-delta-badge ${badgeClass}">${sign}${delta}%</span>
-                    </div>
-                    <div class="driver-bar-track">
-                        <div class="driver-bar-fill ${barClass}" style="width:0%" data-width="${pctWidth}"></div>
-                    </div>
-                </div>`;
-            }
-            const driversContainer = document.getElementById('sim-delta-result');
-            if (driversContainer) driversContainer.innerHTML = barsHTML;
-            document.getElementById('sim-delta-output').style.display = 'block';
-
-            // Animate bars after paint
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    document.querySelectorAll('.driver-bar-fill[data-width]').forEach(bar => {
-                        bar.style.width = bar.getAttribute('data-width') + '%';
-                    });
-                });
-            });
-
-            if (window.lucide) lucide.createIcons();
-
+            updateStatusBadge(true);
+            renderSimulationResults(data);
         } else {
             console.error("Backend error:", data.error);
             alert("Error from ML backend. See console.");
         }
     } catch (err) {
-        console.error("Failed to connect to ML backend:", err);
-        alert("Could not connect to ML backend. Is server.py running?");
+        console.warn("Failed to connect to ML backend, running local simulation:", err);
+        updateStatusBadge(false);
         document.getElementById('sim-status').style.display = 'none';
+        const offlineData = runOfflineSimulate(values);
+        renderSimulationResults(offlineData);
     }
 }
 
 // ─────────────────────────────────────────────────────────────────
-// CLINICAL KNOWLEDGE BASE — TF-IDF Search (from cardioai_gradio.py)
+// RENDER SIMULATION RESULTS
+// ─────────────────────────────────────────────────────────────────
+function renderSimulationResults(data) {
+    const prob = data.base_probability;
+    const pct = (prob * 100).toFixed(1);
+    const riskState = determineRisk(prob);
+    const riskEmoji = getRiskEmoji(riskState);
+    const pred = prob >= 0.35 ? 'Elevated Risk' : 'Routine Status';
+
+    // Animate human icon + ring
+    setHumanRisk(prob);
+
+    // Populate structured outlook rows
+    document.getElementById('sim-prob-output').style.display = 'block';
+    const statusEl = document.getElementById('sim-outlook-status');
+    const pctEl    = document.getElementById('sim-outlook-pct');
+    const catEl    = document.getElementById('sim-outlook-cat');
+    if (statusEl) statusEl.textContent = pred;
+    if (pctEl)    { pctEl.textContent = pct + '%'; pctEl.style.color = prob >= 0.55 ? '#DC2626' : prob >= 0.35 ? '#D97706' : '#16A34A'; }
+    if (catEl)    catEl.textContent = `${riskEmoji} ${riskState}`;
+
+    // Also keep sim-prob-result if it exists (fallback)
+    const probResultEl = document.getElementById('sim-prob-result');
+    if (probResultEl) probResultEl.textContent = '';
+
+    // Hide empty state
+    const emptyEl = document.getElementById('sim-empty-state');
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    // Build visual driver bars
+    const sensitivity = data.sensitivity;
+    const sorted = Object.entries(sensitivity)
+        .map(([feat, delta]) => ({ feat, delta: parseFloat(delta) }))
+        .sort((a, b) => a.delta - b.delta);
+
+    const maxAbs = Math.max(...sorted.map(s => Math.abs(s.delta)), 1);
+    let barsHTML = '';
+    for (const { feat, delta } of sorted) {
+        const isGood = delta <= 0;
+        const pctWidth = Math.min(100, (Math.abs(delta) / maxAbs) * 100).toFixed(1);
+        const sign = delta > 0 ? '+' : '';
+        const badgeClass = isGood ? 'driver-delta-good' : 'driver-delta-bad';
+        const barClass   = isGood ? 'driver-bar-good'   : 'driver-bar-bad';
+        barsHTML += `
+        <div class="driver-row">
+            <div class="driver-label-row">
+                <span>${feat}</span>
+                <span class="driver-delta-badge ${badgeClass}">${sign}${delta}%</span>
+            </div>
+            <div class="driver-bar-track">
+                <div class="driver-bar-fill ${barClass}" style="width:0%" data-width="${pctWidth}"></div>
+            </div>
+        </div>`;
+    }
+    const driversContainer = document.getElementById('sim-delta-result');
+    if (driversContainer) driversContainer.innerHTML = barsHTML;
+    document.getElementById('sim-delta-output').style.display = 'block';
+
+    // Animate bars after paint
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.driver-bar-fill[data-width]').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width') + '%';
+            });
+        });
+    });
+
+    if (window.lucide) lucide.createIcons();
+}
+
+// ─────────────────────────────────────────────────────────────────
+// OFFLINE EDGE AI SUPPORT
+// ─────────────────────────────────────────────────────────────────
+function updateStatusBadge(isOnline) {
+    const badge = document.getElementById('api-status-badge');
+    if (!badge) return;
+    const text = badge.querySelector('.status-badge-text');
+
+    if (isOnline) {
+        badge.className = 'status-badge status-online';
+        if (text) text.textContent = 'Online';
+    } else {
+        badge.className = 'status-badge status-offline';
+        if (text) text.textContent = 'Offline (Edge AI)';
+    }
+}
+
+function runOfflinePredict(values) {
+    const mlRes = model.predictProba(values);
+    const prob = mlRes.probability;
+    const prediction = prob >= 0.35 ? 1 : 0;
+    const riskState = determineRisk(prob);
+
+    const graph = buildMedicalGraph(riskState, values.trestbps, values.chol, values.exang, values.oldpeak, values.age);
+    const astarRes = aStarSearch(graph, riskState, 'Goal State');
+
+    const initFacts = generateInitialFacts(
+        values.age, values.trestbps, values.chol, values.exang, values.oldpeak, riskState,
+        values.thalch, values.thal, values.restecg, values.cp
+    );
+    const kbRes = forwardChaining(initFacts, knowledgeBase);
+    const recommendations = getOfflineRecommendations(values, riskState);
+
+    return {
+        success: true,
+        probability: prob,
+        prediction: prediction,
+        risk_state: riskState,
+        pathway: astarRes.path,
+        pathway_cost: astarRes.cost,
+        initial_facts: initFacts,
+        derived_facts: kbRes.inferred.filter(f => !initFacts.includes(f)),
+        kb_trace: kbRes.trace,
+        recommendations: recommendations
+    };
+}
+
+function runOfflineSimulate(values) {
+    const mlRes = model.predictProba(values);
+    const baseProb = mlRes.probability;
+    const riskState = determineRisk(baseProb);
+    const sensitivity = performSensitivityAnalysis(values);
+
+    return {
+        success: true,
+        base_probability: baseProb,
+        risk_state: riskState,
+        sensitivity: sensitivity
+    };
+}
+
+function getOfflineRecommendations(values, riskState) {
+    const recs = [];
+    if (values.trestbps >= 140) recs.push("Blood pressure management — antihypertensive therapy recommended");
+    if (values.chol >= 240) recs.push("Cholesterol management — statin therapy and dietary intervention");
+    if (values.exang === 1) recs.push("ECG evaluation — exercise-induced angina warrants 12-lead ECG");
+    if (values.oldpeak > 2.0) recs.push("Stress test evaluation — ST depression indicates cardiac stress");
+    if (values.age >= 60) recs.push("Cardiology consultation — age-related risk requires specialist review");
+    if (values.thalch < 120) recs.push("Cardiac reserve assessment — low max heart rate indicates reduced function");
+
+    if (riskState === "High Risk") {
+        recs.push("URGENT: Schedule cardiologist appointment within 7 days");
+    } else if (riskState === "Medium Risk") {
+        recs.push("Schedule follow-up within 4 to 6 weeks");
+    } else {
+        recs.push("Continue preventive care — annual cardiac check-up recommended");
+    }
+    return recs;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// CLINICAL KNOWLEDGE BASE — TF-IDF Search
 // ─────────────────────────────────────────────────────────────────
 window.searchMedicalKB = function() {
     const query = document.getElementById('knowledge-query').value;

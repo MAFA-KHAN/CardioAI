@@ -134,28 +134,28 @@ function performSensitivityAnalysis(baseFeatures) {
     if (baseFeatures.trestbps > 120) {
         const modified = { ...baseFeatures, trestbps: 120 };
         const newProb = model.predictProba(modified).probability;
-        sensitivity['Lower BP → 120 mmHg'] = ((newProb - baseProb) * 100).toFixed(1);
+        sensitivity['Lower BP to 120 mmHg'] = ((newProb - baseProb) * 100).toFixed(1);
     }
 
     // Test: Lower cholesterol to 180
     if (baseFeatures.chol > 180) {
         const modified = { ...baseFeatures, chol: 180 };
         const newProb = model.predictProba(modified).probability;
-        sensitivity['Lower Cholesterol → 180'] = ((newProb - baseProb) * 100).toFixed(1);
+        sensitivity['Lower Cholesterol to 180'] = ((newProb - baseProb) * 100).toFixed(1);
     }
 
     // Test: Increase max HR
     if (baseFeatures.thalch < 180) {
         const modified = { ...baseFeatures, thalch: Math.min(202, baseFeatures.thalch + 15) };
         const newProb = model.predictProba(modified).probability;
-        sensitivity['Increase Max HR +15'] = ((newProb - baseProb) * 100).toFixed(1);
+        sensitivity['Increase Max HR by 15'] = ((newProb - baseProb) * 100).toFixed(1);
     }
 
     // Test: Reduce ST depression
     if (baseFeatures.oldpeak > 0) {
         const modified = { ...baseFeatures, oldpeak: 0 };
         const newProb = model.predictProba(modified).probability;
-        sensitivity['Reduce ST Depression → 0'] = ((newProb - baseProb) * 100).toFixed(1);
+        sensitivity['Reduce ST Depression to 0'] = ((newProb - baseProb) * 100).toFixed(1);
     }
 
     // Test: Remove exercise angina
