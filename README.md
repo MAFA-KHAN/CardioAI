@@ -20,7 +20,7 @@ It processes 13 clinical features (from the combined 920-record UCI Heart Diseas
 
 ---
 
-## 📂 Professional Repository Structure
+## 📂 Repository Structure
 The project has been professionally organized to separate concerns across the backend, frontend, models, and research notebooks.
 
 ```
@@ -36,18 +36,9 @@ CardioAI/
 │   ├── app.js                        # Main UI Controller & API client logic
 │   ├── algorithms.js                 # Client-side A*, KB, and NLP algorithms
 │   └── model.js                      # Offline JS ML Fallback logic
-├── notebooks/
-│   ├── phase_1.ipynb                 # EDA, Preprocessing, and ML Training
-│   └── CardioAI_Phase2_Clean.ipynb   # AI Architecture (PEAS, Search, KB)
-└── docs/
-    ├── project_report.md             # Complete FYP technical report
-    ├── system_guide.md               # Master system summary & study roadmap
-    ├── viva_questions.md             # Folder guide & technical viva questions
-    ├── project_alignment.md          # Assignment requirement mapping
-    ├── justification.md              # clinical & technical decision justifications
-    ├── kb_predicate_logic.md         # 24 rules represented in Predicate Logic (FOPL)
-    ├── ml_pipeline.md                # Phase 1 ML processing details
-    └── ai_algorithms.md              # Phase 2 planning and reasoning details
+└── notebooks/
+    ├── phase_1.ipynb                 # EDA, Preprocessing, and ML Training
+    └── CardioAI_Phase2_Clean.ipynb   # AI Architecture (PEAS, Search, KB)
 ```
 
 ---
@@ -98,14 +89,19 @@ The Simulator tab allows users to select preset patient profiles inspired by K-M
 
 ---
 
-## 📚 Deep Documentation
-For examiners or developers wishing to dive into the technical theory and rubric fulfillment, please review the files in the `docs/` folder:
-* **[project_report.md](file:///c:/Users/m/Downloads/CardioAI-main/CardioAI-main/docs/project_report.md)**: Full-length Final Year Project style technical report.
-* **[system_guide.md](file:///c:/Users/m/Downloads/CardioAI-main/CardioAI-main/docs/system_guide.md)**: Master system summary explaining all three pages, the R-Simulator, and a study guide.
-* **[viva_questions.md](file:///c:/Users/m/Downloads/CardioAI-main/CardioAI-main/docs/viva_questions.md)**: Graded technical viva preparation questions (ML, AI, Full-Stack).
-* **[kb_predicate_logic.md](file:///c:/Users/m/Downloads/CardioAI-main/CardioAI-main/docs/kb_predicate_logic.md)**: Formal mathematical representations of the 24 clinical rules in First-Order Predicate Logic.
+## 🛠️ How CardioAI Was Built
+CardioAI didn't start as a finished hybrid system — it was built in layers, each one added to fix a specific gap in the last:
+
+1. **Phase 1 — Data & ML Core.** Started from the raw 920-record UCI Heart Disease dataset (4 merged sub-datasets with different missingness patterns). Cleaned and unified the schema, then engineered four interaction features (`bp_chol_interaction`, `exercise_stress_score`, `thalch_age_ratio`, `age_risk_group`) to capture compound medical risk that raw vitals alone don't expose. Trained and tuned an XGBoost classifier on top, deliberately lowering the decision threshold from 0.50 to 0.35 — a direct response to optimizing for recall rather than accuracy, since a missed at-risk patient is clinically worse than a false alarm.
+2. **Phase 2 — Symbolic Reasoning Layer.** Once the ML model could output a risk score, the next gap was *interpretability* — a number alone isn't a clinical decision. This is where the project shifted from a prediction task into an **agent architecture**: an A* search agent to plan the optimal sequence of clinical interventions, and a forward-chaining knowledge base (24 rules from AHA/ACC/NHLBI guidelines) to independently verify the ML output symbolically, so the system never silently trusts the model alone.
+3. **Counterfactual & Retrieval Layer.** Built a simulator on top of the trained model to answer "what-if" questions live (e.g. what happens to risk if ST depression drops), plus a TF-IDF retrieval layer so every conclusion could be tied back to a literature reference instead of floating as an unexplained number.
+4. **Full-Stack Wrap.** Wrapped the whole pipeline in a Flask REST API with a vanilla-JS frontend — and, critically, a JS-side fallback (`model.js`, `algorithms.js`) that reimplements the XGBoost decision boundary and the search/KB logic natively in-browser, so the system degrades gracefully instead of breaking if the backend goes down.
+
+The throughline across all four phases: every addition was justified by a specific weakness in the previous layer — accuracy → recall, prediction → explainability, static output → interactive probing, backend-dependent → backend-optional — rather than features bolted on for their own sake.
 
 ---
+
+
 
 ## 🙏 Acknowledgments
 CardioAI leverages open access datasets. Special thanks to the **UCI Machine Learning Repository** for providing the foundational Cleveland, Hungarian, Swiss, and Long Beach Heart Disease datasets.
