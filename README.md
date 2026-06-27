@@ -6,6 +6,14 @@ An advanced clinical decision support system integrating XGBoost, A* Search, and
 [![Flask](https://img.shields.io/badge/Flask-2.2%2B-orange.svg)](https://flask.palletsprojects.com/)
 [![Vanilla JS](https://img.shields.io/badge/Vanilla%20JS-ES6%2B-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
+
+<div align="center">
+    <img src="frontend/WhatsApp%20Image%202026-06-27%20at%2010.27.34%20AM.jpeg" alt="Dashboard Preview" width="90%">
+    <br>
+    <h3><i>"Hybrid AI system for explainable cardiac risk prediction."</i></h3>
+</div>
+<br>
+
 ---
 
 ## 📖 Overview
